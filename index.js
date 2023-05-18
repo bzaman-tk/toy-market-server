@@ -31,18 +31,14 @@ async function run() {
         client.connect();
         const toyCollection = client.db('toyDB').collection('toys');
 
-        app.get('/category_name', async (req, res) => {
-            const result = await toyCollection.find({}, { projection: { _id: 0, categorys: 1 } }).toArray()
-            const categorys = []
-            result.map(cat => {
-                if (categorys.includes(cat.categorys)) {
-                    //console.log(cat.categorys)
-                } else {
-                    categorys.push(cat.categorys)
-                }
-            })
-            // console.log(categorys)
-            res.send(categorys)
+        app.get('/toys', async (req, res) => {
+            const result = await toyCollection.find().toArray()
+            res.send(result)
+        })
+
+        app.get('/all-toys', async (req, res) => {
+            const result = await toyCollection.find().limit(20).toArray()
+            res.send(result)
         })
 
         app.post('/addtoy', async (req, res) => {
