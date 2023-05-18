@@ -28,9 +28,13 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
-        client.connect();
+        // client.connect();
         const toyCollection = client.db('toyDB').collection('toys');
-
+        // Creating index on two fields
+        const indexKeys = { name: 1, categorys: 1 };
+        const indexOptions = { name: "namecat" };
+        const result = await toyCollection.createIndex(indexKeys, indexOptions);
+        // console.log(result);
         app.get('/toys', async (req, res) => {
             const result = await toyCollection.find().toArray()
             res.send(result)
@@ -38,6 +42,19 @@ async function run() {
 
         app.get('/all-toys', async (req, res) => {
             const result = await toyCollection.find().limit(20).toArray()
+            res.send(result)
+        })
+        app.get('/search/:text', async (req, res) => {
+            const searchText = req.params.text;
+            const result = await toyCollection.find(
+                {
+                    $or: [
+                        { name: { $regex: searchText, $options: "i" } },
+                        { categorys: { $regex: searchText, $options: "i" } },
+                    ],
+                }
+            ).toArray()
+            // console.log(searchText);
             res.send(result)
         })
 
