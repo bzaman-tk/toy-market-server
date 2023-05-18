@@ -31,6 +31,20 @@ async function run() {
         client.connect();
         const toyCollection = client.db('toyDB').collection('toys');
 
+        app.get('/category_name', async (req, res) => {
+            const result = await toyCollection.find({}, { projection: { _id: 0, categorys: 1 } }).toArray()
+            const categorys = []
+            result.map(cat => {
+                if (categorys.includes(cat.categorys)) {
+                    //console.log(cat.categorys)
+                } else {
+                    categorys.push(cat.categorys)
+                }
+            })
+            // console.log(categorys)
+            res.send(categorys)
+        })
+
         app.post('/addtoy', async (req, res) => {
             const newToy = req.body;
             const result = await toyCollection.insertOne(newToy)
