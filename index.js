@@ -74,6 +74,22 @@ async function run() {
             res.send(result)
         })
 
+        app.patch('/update/:id', async (req, res) => {
+            const data = req.body;
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: false };
+            const updateDoc = {
+                $set: {
+                    price: data.price,
+                    quantity: data.quantity,
+                    details: data.details
+                }
+            }
+            const result = await toyCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
         app.delete('/:id', async (req, res) => {
             const id = req.params.id;
             // console.log(id);
