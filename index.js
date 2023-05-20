@@ -28,33 +28,33 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
-        // client.connect();
+        //client.connect();
         const toyCollection = client.db('toyDB').collection('toys');
         // Creating index on two fields
-        const indexKeys = { name: 1, categorys: 1 };
-        const indexOptions = { name: "namecat" };
-        const result = await toyCollection.createIndex(indexKeys, indexOptions);
+        //const indexKeys = { name: 1, categorys: 1 };
+        //const indexOptions = { name: "namecat" };
+        //const result = await toyCollection.createIndex(indexKeys, indexOptions);
         // console.log(result);
         app.get('/toys', async (req, res) => {
             const result = await toyCollection.find().toArray()
-            res.send(result)
+            res.json(result)
         })
         app.get('/toy/:id', async (req, res) => {
             const id = req.params.id;
             const result = await toyCollection.find({ _id: new ObjectId(id) }).toArray()
-            res.send(result)
+            res.json(result)
         })
         app.get('/my-toys', async (req, res) => {
             const email = req.query.email;
             const result = await toyCollection.find({ email: email }).toArray()
             // console.log(result);
-            res.send(result)
+            res.json(result)
         })
         app.get('/all-toys', async (req, res) => {
             const count = await toyCollection.estimatedDocumentCount()
             const toys = await toyCollection.find().limit(20).toArray()
             const result = { count, toys }
-            res.send(result)
+            res.json(result)
         })
         app.get('/search/:text', async (req, res) => {
             const searchText = req.params.text;
@@ -67,13 +67,13 @@ async function run() {
                 }
             ).toArray()
             // console.log(searchText);
-            res.send(result)
+            res.json(result)
         })
 
         app.post('/addtoy', async (req, res) => {
             const newToy = req.body;
             const result = await toyCollection.insertOne(newToy)
-            res.send(result)
+            res.json(result)
         })
 
         app.patch('/update/:id', async (req, res) => {
@@ -89,19 +89,19 @@ async function run() {
                 }
             }
             const result = await toyCollection.updateOne(filter, updateDoc, options)
-            res.send(result)
+            res.json(result)
         })
 
         app.delete('/:id', async (req, res) => {
             const id = req.params.id;
             // console.log(id);
             const result = await toyCollection.deleteOne({ _id: new ObjectId(id) })
-            res.send(result)
+            res.json(result)
         })
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        //await client.db("admin").command({ ping: 1 });
+        //console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
         //await client.close();
