@@ -51,7 +51,9 @@ async function run() {
             res.send(result)
         })
         app.get('/all-toys', async (req, res) => {
-            const result = await toyCollection.find().limit(20).toArray()
+            const count = await toyCollection.estimatedDocumentCount()
+            const toys = await toyCollection.find().limit(20).toArray()
+            const result = { count, toys }
             res.send(result)
         })
         app.get('/search/:text', async (req, res) => {
